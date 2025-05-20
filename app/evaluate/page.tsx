@@ -20,6 +20,8 @@ import FileUpload from './components/FileUpload';
 import EvaluationResult from './components/EvaluationResult';
 import { parseFile, validateFileFormat } from '@/lib/services/fileService';
 import type { Benchmark } from '@/lib/types/benchmark';
+import { useRouter } from 'next/navigation';
+import { useEvaluationStore } from '@/lib/store/evaluationStore';
 
 // 默认值定义
 const defaultHumanMetrics: HumanMetricsType = {
@@ -136,6 +138,8 @@ const exampleBenchmark: Benchmark = {
 };
 
 export default function EvaluatePage() {
+  const router = useRouter();
+  const { addEvaluationHistory, setCurrentEvaluation, evaluationHistory } = useEvaluationStore();
   const [state, setState] = useState<EvaluatePageState>({
     tableData: [],
     fileName: '',
@@ -151,6 +155,7 @@ export default function EvaluatePage() {
   const [scores, setScores] = React.useState<Record<string, number>>({});
   const [hasData, setHasData] = React.useState(false);
   const [showEvalResult, setShowEvalResult] = React.useState(false);
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   const updateState = useCallback((updates: Partial<EvaluatePageState>) => {
     setState(prev => ({ ...prev, ...updates }));
@@ -396,6 +401,36 @@ function generateComments(${Object.keys(criteria).map(key => `${key}Score`).join
     }
   };
 
+  // 处理评估并跳转到报告页面
+  const handleEvaluateAndNavigate = () => {
+    if (!activeBenchmark || !scores) {
+      alert('请先选择评估基准并完成评估');
+      return;
+    }
+
+    setIsEvaluating(true);
+
+    try {
+      // 保存评估历史
+      addEvaluationHistory({
+        benchmark: activeBenchmark,
+        data: state.evaluationData,
+        scores: scores
+      });
+      
+      // 设置当前评估数据
+      setCurrentEvaluation(state.evaluationData);
+      
+      // 跳转到报告页面
+      router.push('/report');
+    } catch (error) {
+      console.error('评估过程出错:', error);
+      alert('评估过程出现错误，请重试');
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">AI 产品评估</h1>
@@ -441,10 +476,25 @@ function generateComments(${Object.keys(criteria).map(key => `${key}Score`).join
             <h2 className="text-xl font-semibold text-gray-800">数据预览与编辑</h2>
             <div className="space-x-4">
               <button
-                onClick={() => setShowEvalResult(true)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+                onClick={handleEvaluateAndNavigate}
+                disabled={!activeBenchmark || isEvaluating}
+                className={`px-6 py-2 rounded-md ${
+                  !activeBenchmark || isEvaluating
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white focus:outline-none flex items-center`}
               >
-                查看评估结果
+                {isEvaluating ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    评估中...
+                  </>
+                ) : (
+                  <>生成评估报告</>
+                )}
               </button>
               <button
                 onClick={handleExport}
@@ -458,20 +508,42 @@ function generateComments(${Object.keys(criteria).map(key => `${key}Score`).join
         </div>
       )}
 
-      {showEvalResult && (
+      {activeBenchmark && (
         <div className="space-y-8">
-          <EvaluationResult
-            benchmark={activeBenchmark || exampleBenchmark}
-            scores={scores}
-          />
-          <EvaluationTrends
-            benchmark={activeBenchmark || exampleBenchmark}
-          />
+          {showEvalResult && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <EvaluationResult
+                benchmark={activeBenchmark}
+                scores={scores}
+              />
+            </div>
+          )}
+          
+          <div className="bg-white rounded-lg shadow p-6">
+            <EvaluationTrends
+              benchmark={activeBenchmark}
+              history={evaluationHistory}
+            />
+          </div>
         </div>
       )}
 
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">构建评估方式</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-gray-800">构建评估方式</h2>
+          {activeBenchmark && scores && (
+            <button
+              onClick={handleEvaluateAndNavigate}
+              disabled={isEvaluating}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none flex items-center space-x-2"
+            >
+              <span>查看完整报告</span>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+        </div>
         <Tab.Group>
           <Tab.List className="flex space-x-1 rounded-xl bg-gray-100 p-1">
             {EvaluationBuilderTypes.map((type) => (

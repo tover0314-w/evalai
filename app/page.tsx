@@ -73,23 +73,7 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* 分析报告卡片 */}
-          <Link href="/reports" className="group">
-            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">
-              <div className="flex items-center justify-between mb-6">
-                <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors duration-300">
-                  <Icons.TrendingUp />
-                </div>
-                <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
-                  数据分析
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">分析报告</h3>
-              <p className="text-gray-600">
-                可视化展示评估结果，深入分析产品优势与改进空间
-              </p>
-            </div>
-          </Link>
+                    {/* 分析报告卡片 */}          <Link href="/report" className="group">            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100">              <div className="flex items-center justify-between mb-6">                <div className="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors duration-300">                  <Icons.TrendingUp />                </div>                <span className="text-sm font-medium text-purple-600 bg-purple-50 px-3 py-1 rounded-full">                  数据分析                </span>              </div>              <h3 className="text-xl font-semibold text-gray-900 mb-2">分析报告</h3>              <p className="text-gray-600">                可视化展示评估结果，深入分析产品优势与改进空间              </p>            </div>          </Link>
         </div>
 
         {/* 特性展示区域 */}
