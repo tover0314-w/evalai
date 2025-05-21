@@ -17,6 +17,31 @@ const Icons = {
     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
     </svg>
+  ),
+  ClipboardCheck: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 5a2 2 0 012-2h4a2 2 0 012 2" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11l-6 6" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 11l6 6" />
+    </svg>
+  ),
+  AIEval: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      {/* 外部六边形（代表 AI 芯片） */}
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
+        d="M12 4L6 8v8l6 4 6-4V8l-6-4z" />
+      {/* 内部网格线（代表电路） */}
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
+        d="M12 4v8m0 0v8m0-8l-6-4m6 4l6-4" />
+      {/* 中心点 */}
+      <circle cx="12" cy="12" r="1" fill="currentColor" />
+    </svg>
+  ),
+  Sparkles: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+    </svg>
   )
 };
 
@@ -27,9 +52,15 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-16">
         {/* 标题部分 */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            AI 产品评估平台
-          </h1>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <Icons.AIEval />
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center">
+              Eval<span className="text-blue-600">.ai</span>
+              <span className="ml-2 text-yellow-500">
+                <Icons.Sparkles />
+              </span>
+            </h1>
+          </div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             科学、系统、高效地评估您的 AI 产品表现
           </p>
